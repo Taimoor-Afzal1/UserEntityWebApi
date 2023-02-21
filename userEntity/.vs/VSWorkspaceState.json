@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\UserEntity",
+    "\\UserEntity\\UserEntity",
+    "\\UserEntity\\UserEntity\\Controllers",
+    "\\UserEntity\\UserEntity\\Properties"
+  ],
+  "SelectedNode": "\\UserEntity\\UserEntity\\Program.cs",
+  "PreviewInSolutionExplorer": false
+}
