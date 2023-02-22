@@ -7,91 +7,107 @@ namespace UserEntity.Service
 {
     public class UserService : IUserService
     {
-        private readonly UserDbContext _Context;
-
+        private readonly UserDbContext _context;
         public readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public UserService(UserDbContext context, IMapper mapper)
+        public UserService(UserDbContext context, IMapper mapper, ILogger logger)
         {
-            _Context = context;
+            _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<List<User>> GetAll()
         {
-            return (await _Context.Users.ToListAsync());
+            return (await _context.Users.ToListAsync());
         }
 
-        public async Task<ServiceResponse<User>> GetUserById(int id)
+        public async Task<User> GetUserById(int id)
         {
-            var serviceResponse = new ServiceResponse<User>();
-            serviceResponse.Data = await _Context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (serviceResponse.Data == null)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "User Not found";
-            }
-            else
-            {
-                serviceResponse.Message = "Data Fetched Successfully!";
-            }
-
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<List<User>>> AddNewUser(AddUserDto newUser)
-        {
-            var user = _mapper.Map<User>(newUser);
-            await _Context.Users.AddAsync(user);
-            await _Context.SaveChangesAsync();
-
-            var serviceResponse = new ServiceResponse<List<User>>();
-            serviceResponse.Data = await _Context.Users.ToListAsync();
-            serviceResponse.Message = "New User Added!";
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<User>>> UpdateOldUser(User updateUser)
-        {
-            var serviceResponse = new ServiceResponse<List<User>>();
             try
             {
-                var user = await _Context.Users.FirstOrDefaultAsync(u => u.Id == updateUser.Id);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user is null)
+                {
+                    throw new ArgumentException("No user exists!");
+                }
+                else
+                {
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{0}, {1}", ex.Message, ex);
+                throw;
+            }
+            
+        }
+        public async Task<User> AddNewUser(AddUserDto newUser)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(newUser);
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{0}, {1}", ex.Message, ex);
+                throw;
+            }
+            
+        }
+
+        public async Task<User> UpdateOldUser(User updateUser)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == updateUser.Id);
+
+                if (user is null)
+                {
+                    throw new ArgumentException("No user exists!");
+                }
+
                 user.FirstName = updateUser.FirstName;
                 user.LastName = updateUser.LastName;
 
-                _Context.Users.Update(user);
-                await _Context.SaveChangesAsync();
-
-                serviceResponse.Data = await _Context.Users.ToListAsync();
-                serviceResponse.Message = "User Updated!";
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return user;
             }
-            catch 
+            catch(Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "User Not found";
+                _logger.LogError($"{0}, {1}", ex.Message, ex);
+                throw;
             }
-            return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<User>>> DelUserById(int id)
+        public async Task<List<User>> DelUserById(int id)
         {
-            var serviceResponse = new ServiceResponse<List<User>>();
             try
             {
-                var user = await _Context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                _Context.Users.Remove(user);
-                await _Context.SaveChangesAsync();
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-                serviceResponse.Data = await _Context.Users.ToListAsync();
-                serviceResponse.Message = "User Deleted!";
+                if (user is null)
+                {
+                    throw new ArgumentException("No user exists!");
+                }
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+
+                return (await _context.Users.ToListAsync());
             }
-            catch 
+            catch (Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "User Not found";
+                _logger.LogError($"{0}, {1}", ex.Message, ex);
+                throw;
             }
-
-            return serviceResponse;
         }
     }
 }

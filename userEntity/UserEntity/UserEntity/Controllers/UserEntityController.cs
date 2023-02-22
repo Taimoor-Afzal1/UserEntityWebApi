@@ -22,39 +22,62 @@ namespace UserEntity.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _user.GetAll());
+            return Ok(new { Data = await _user.GetAll() }, "Data fetched");
         }
 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            return Ok(await _user.GetUserById(id));
+            try
+            {
+                return Ok(await _user.GetUserById(id), "Data fetched");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> AddUser(AddUserDto newUser)
         {
-            return Ok(await _user.AddNewUser(newUser));
+            try
+            {
+                return Ok(new { Data = await _user.AddNewUser(newUser) }, "New User Added");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+                throw;
+            }
         }
 
 
         [HttpPut]
         public async Task<IActionResult> UpdateUser(User User)
         {
-            ServiceResponse<List<User>> response = await _user.UpdateOldUser(User);
-            if (response.Data == null)
+            try
             {
-                return NotFound(response);
+                return Ok(new { Data = await _user.UpdateOldUser(User) }, "User Updated");
             }
-            return Ok(response);
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            return Ok(await _user.DelUserById(id));
+            try
+            {
+                return Ok(new { Data = await _user.DelUserById(id) }, "User Deleted");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
