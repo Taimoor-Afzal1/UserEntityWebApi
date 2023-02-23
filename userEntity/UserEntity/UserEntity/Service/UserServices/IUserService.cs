@@ -1,7 +1,7 @@
 ﻿using UserEntity.Dtos;
 using UserEntity.Model;
 
-namespace UserEntity.Service
+namespace UserEntity.Service.UserServices
 {
     public interface IUserService
     {
@@ -9,6 +9,6 @@ namespace UserEntity.Service
         Task<User> GetUserById(int id);
         Task<User> AddNewUser(AddUserDto newUser);
         Task<User> UpdateOldUser(User newUser);
-        Task<List<User>> DelUserById(int id);
+        Task DelUserById(int id);
     }
 }

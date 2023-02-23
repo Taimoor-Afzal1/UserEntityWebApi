@@ -1,10 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using UserEntity.Service;
 using UserEntity.Model;
 using UserEntity;
+using UserEntity.Service.UserServices;
+using UserEntity.Service.UserServices.UserServicesImplementation;
+using UserEntity.GenericRepository;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+});
 // Add services to the container.
 
 builder.Services.AddControllers();

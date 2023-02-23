@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using UserEntity.Dtos;
 using UserEntity.Model;
-using UserEntity.Service;
+using UserEntity.Service.UserServices;
 
 namespace UserEntity.Controllers
 {
@@ -61,8 +61,8 @@ namespace UserEntity.Controllers
             {
                 return Ok(new { Data = await _user.UpdateOldUser(User) }, "User Updated");
             }
-            catch (Exception ex) {
-                return BadRequest(ex.Message);
+            catch {
+                return BadRequest("User not found");
             }
         }
 
@@ -72,11 +72,12 @@ namespace UserEntity.Controllers
         {
             try
             {
-                return Ok(new { Data = await _user.DelUserById(id) }, "User Deleted");
+                await _user.DelUserById(id);
+                return Ok("User Deleted");
             }
-            catch (Exception ex)
+            catch
             {
-                return BadRequest(ex.Message);
+                return BadRequest("User not found");
             }
         }
     }
