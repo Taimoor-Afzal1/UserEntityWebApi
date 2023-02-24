@@ -19,10 +19,10 @@ namespace UserEntity.Controllers
             _user = user;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{Currentpage}/ {PageItems}")]
+        public async Task<IActionResult> Get(int Currentpage, int PageItems)
         {
-            return Ok(new { Data = await _user.GetAll() }, "Data fetched");
+            return Ok(new { Data = await _user.GetAll(Currentpage, PageItems) }, "Data fetched");
         }
 
 

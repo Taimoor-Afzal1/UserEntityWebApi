@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using UserEntity.Dtos;
 using UserEntity.Model;
 using UserEntity.Service.UserServices.UserServicesImplementation;
 
@@ -19,9 +20,23 @@ namespace UserEntity.GenericRepository
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<PaginationDto<T>> GetAll(int Currentpage, float PageItems)
         {
-            return await _dbSet.ToListAsync();
+            var users =  await _dbSet
+                .Skip((Currentpage - 1) * (int)PageItems)
+                .Take((int)PageItems)
+                .ToListAsync();
+
+            var totalPages = Math.Ceiling(_dbSet.Count() / PageItems);
+
+            var response = new PaginationDto<T>
+            {
+                Values = users,
+                CurrentPage = Currentpage,
+                TotalPages = totalPages
+            };
+
+            return response;
         }
 
         public async Task<T> GetById(object id)

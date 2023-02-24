@@ -22,9 +22,9 @@ namespace UserEntity.Service.UserServices.UserServicesImplementation
             _repository = new GenericRepository<User>(_context);
         }
 
-        public async Task<List<User>> GetAll()
+        public async Task<PaginationDto<User>> GetAll(int Currentpage, int PageItems)
         {
-            var users = await _repository.GetAll();
+            var users = await _repository.GetAll(Currentpage, PageItems);
             return users;
         }
 

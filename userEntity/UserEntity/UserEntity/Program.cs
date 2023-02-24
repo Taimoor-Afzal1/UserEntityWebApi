@@ -4,12 +4,14 @@ using UserEntity;
 using UserEntity.Service.UserServices;
 using UserEntity.Service.UserServices.UserServicesImplementation;
 using UserEntity.GenericRepository;
+using NLog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureLogging(logging =>
 {
     logging.ClearProviders();
     logging.AddConsole();
+    logging.AddNLog();
 });
 // Add services to the container.
 

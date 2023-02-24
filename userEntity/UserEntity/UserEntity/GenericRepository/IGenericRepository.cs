@@ -1,8 +1,10 @@
-﻿namespace UserEntity.GenericRepository
+﻿using UserEntity.Dtos;
+
+namespace UserEntity.GenericRepository
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<List<T>> GetAll();
+        Task<PaginationDto<T>> GetAll(int Currentpage, float PageItems);
         Task<T> GetById(object id);
         Task<T> Insert(T obj);
         Task Update(T obj);
