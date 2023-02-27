@@ -183,3 +183,4 @@ C:\Users\Taimoor\Desktop\User Api\userEntity\UserEntity\UserEntity\bin\Debug\net
 C:\Users\Taimoor\Desktop\User Api\userEntity\UserEntity\UserEntity\bin\Debug\net6.0\NLog.dll
 C:\Users\Taimoor\Desktop\User Api\userEntity\UserEntity\UserEntity\bin\Debug\net6.0\NLog.Extensions.Logging.dll
 C:\Users\Taimoor\Desktop\User Api\userEntity\UserEntity\UserEntity\bin\Debug\net6.0\NLog.Web.AspNetCore.dll
+C:\Users\Taimoor\Desktop\User Api\userEntity\UserEntity\UserEntity\bin\Debug\net6.0\System.Linq.Dynamic.Core.dll

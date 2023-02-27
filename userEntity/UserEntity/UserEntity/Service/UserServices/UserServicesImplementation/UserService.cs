@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using UserEntity.Dtos;
 using UserEntity.GenericRepository;
 using UserEntity.Model;
 using UserEntity.Service.UserServices;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 
 namespace UserEntity.Service.UserServices.UserServicesImplementation
 {
@@ -26,6 +29,33 @@ namespace UserEntity.Service.UserServices.UserServicesImplementation
         {
             var users = await _repository.GetAll(Currentpage, PageItems);
             return users;
+        }
+
+        public async Task<PaginationDto<User>> SearchUser(string name, int Currentpage, float PageItems,
+            string filterCol, string orderby)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    Expression<Func<User, bool>> filter = DynamicExpressionParser
+                    .ParseLambda<User, bool>(new ParsingConfig(), true, $"{filterCol}.Contains(@0)", name);
+
+                    var orderBy = orderby;
+
+                    var users = await _repository.SearchItem(name, Currentpage, PageItems, filter, orderBy);
+                    return users;
+                }
+                else
+
+                {
+                    throw new ArgumentException("Nothing Found!");
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<User> GetUserById(int id)
@@ -96,5 +126,7 @@ namespace UserEntity.Service.UserServices.UserServicesImplementation
                 throw;
             }
         }
+
+        
     }
 }

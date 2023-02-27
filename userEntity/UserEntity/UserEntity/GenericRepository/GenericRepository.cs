@@ -2,9 +2,12 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using UserEntity.Dtos;
 using UserEntity.Model;
 using UserEntity.Service.UserServices.UserServicesImplementation;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 
 namespace UserEntity.GenericRepository
 {
@@ -27,16 +30,49 @@ namespace UserEntity.GenericRepository
                 .Take((int)PageItems)
                 .ToListAsync();
 
+            var totalrecord = _dbSet.Count();
             var totalPages = Math.Ceiling(_dbSet.Count() / PageItems);
 
             var response = new PaginationDto<T>
             {
                 Values = users,
                 CurrentPage = Currentpage,
-                TotalPages = totalPages
+                TotalPages = totalPages,
+                TotalRecords = totalrecord
             };
-
             return response;
+        }
+
+        public async Task<PaginationDto<T>> SearchItem(string name, int Currentpage, float PageItems, 
+            Expression<Func<User, bool>> filter,string orderby)
+        {
+            try
+            {
+                IQueryable<T> query = _dbSet;
+
+                query = query.Where(filter);
+
+                    var queryPagin = query.OrderBy(orderby)
+                        .Skip((Currentpage - 1) * (int)PageItems)
+                        .Take((int)PageItems);
+
+
+                    var totalrecord = query.Count();
+                    var totalPages = Math.Ceiling(totalrecord / PageItems);
+
+                    var response = new PaginationDto<T>
+                    {
+                        Values = await queryPagin.ToListAsync(),
+                        CurrentPage = Currentpage,
+                        TotalPages = totalPages,
+                        TotalRecords = totalrecord
+                    };
+                    return response;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<T> GetById(object id)
@@ -111,5 +147,7 @@ namespace UserEntity.GenericRepository
         {
              await _context.SaveChangesAsync();
         }
+
+        
     }
 }

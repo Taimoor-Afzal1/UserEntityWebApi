@@ -19,10 +19,24 @@ namespace UserEntity.Controllers
             _user = user;
         }
 
-        [HttpGet("{Currentpage}/ {PageItems}")]
+        [HttpGet("{Currentpage}/{PageItems}")]
         public async Task<IActionResult> Get(int Currentpage, int PageItems)
         {
             return Ok(new { Data = await _user.GetAll(Currentpage, PageItems) }, "Data fetched");
+        }
+
+        [HttpGet("search/{searchedItem}/{Currentpage}/{PageItems}/{filterColumn}/{orderBy}")]
+        public async Task<IActionResult> SearchUser(string searchedItem, int Currentpage, float PageItems,
+            string filterColumn = "FirstName", string orderBy = "Id")
+        {
+            try
+            {
+                return Ok(new { Data = await _user.SearchUser(searchedItem, Currentpage, PageItems, filterColumn, orderBy) });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
